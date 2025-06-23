@@ -24,10 +24,12 @@ class AppServiceProvider extends ServiceProvider
     {
         //Passport::loadKeysFrom(__DIR__.'/../secrets/oauth'); // ask 
 
-        Passport::loadKeysFrom(
-            env('PASSPORT_PUBLIC_KEY'),
-            env('PASSPORT_PRIVATE_KEY')
-        );
+        // Passport::loadKeysFrom(
+        //     env('PASSPORT_PUBLIC_KEY'),
+        //     env('PASSPORT_PRIVATE_KEY')
+        // );
+
+        Passport::enablePasswordGrant();
 
         //
         Passport::tokensExpireIn(CarbonInterval::days(15));
