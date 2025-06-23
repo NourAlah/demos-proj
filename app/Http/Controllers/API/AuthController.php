@@ -52,9 +52,9 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        dd($request->validated()['email']);
+        $validated = $request->validated();
         // Check if user exists
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $validated['email'])->first();
         if (!$user) {
             return response()->json([
                 'status' => 'error',
