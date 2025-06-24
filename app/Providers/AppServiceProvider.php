@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Carbon\CarbonInterval;
-use Illuminate\Support\Facades\Log;
 use Laravel\Passport\Passport;
+use App\Repositories\PostRepositoryInterface;
+use App\Repositories\PostRepository;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
     }
 
     /**
