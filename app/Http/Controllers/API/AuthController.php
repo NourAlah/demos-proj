@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,27 +15,14 @@ use Illuminate\Support\Facades\Http;
 class AuthController extends Controller
 {
     //
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        // Validate input
-        $Validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        if ($Validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $Validator->errors()
-            ], 422);
-        }
+        $validated = $request->validated();
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'name' =>  $validated['name'],
+            'email' =>  $validated['email'],
+            'password' => Hash::make($validated['password'])
         ]);
 
         // Create access token
@@ -47,7 +35,7 @@ class AuthController extends Controller
             'user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer'
-        ]);
+        ],200);
     }
 
     public function login(LoginRequest $request)
@@ -83,6 +71,17 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'User logged in successfully',
             'data' => $data
-        ]);
+        ],200);
+    }
+
+    public function logout(Request $request){
+                
+        $request->user()->token()->revoke();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User Logged out successfully',
+        ],200);
+
     }
 }
