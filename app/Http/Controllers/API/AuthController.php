@@ -41,6 +41,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $validated = $request->validated();
+
         // Check if user exists
         $user = User::where('email', $validated['email'])->first();
         if (!$user) {
@@ -49,6 +50,15 @@ class AuthController extends Controller
                 'message' => 'Validation failed',
                 'errors' => 'This email is not registered. Please register first.'
             ], 404);
+        }
+
+        // Check if password is correct
+        if (!Hash::check($validated['password'], $user->password)) {
+            return response()->json([
+                'status' => 'error',
+                 'message' => 'Validation failed',
+                 'errors' => 'Incorrect password. Please try again.'
+            ], 401);
         }
 
         $tokenRequest = \Illuminate\Http\Request::create('/oauth/token', 'POST', [
