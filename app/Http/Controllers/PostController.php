@@ -65,19 +65,53 @@ class PostController extends Controller
 
     public function update(UpdatePostRequest $request,$id){
 
-        dd($request->all()); 
         $validated = $request->validated();
-                return response()->json($validated);
 
-        $post = $this->postRepository->update($id, $validated);
-        return response()->json($post);
+         $data = [
+            ...$validated,
+            'id' => $id,
+        ];
+
+        try {
+
+            $post = $this->postRepository->update($data);
+            return response()->json([
+                'success' => true,
+                'message' => 'Post Updated successfully.',
+                'data' => $post
+            ], 200);
+
+        } catch (\Throwable $th) {
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Post not found.'
+            ], 404);
+
+        }
+       
 
     }
 
-   /*  public function destroy($id){
+    public function destroy($id)
+    {
+        try {
+            $this->postRepository->delete($id);
 
+            return response()->json([
+                'success' => true,
+                'message' => 'Post deleted successfully.'
+            ], 200);
+            
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Post not found or could not be deleted.'
+            ], 404);
+        }
     }
- */
+
+
 
 
 
